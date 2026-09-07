@@ -142,17 +142,62 @@ async function runTests() {
   });
   console.log('✓ Secció de prova eliminada');
 
-  // Netejar respostes de prova del document
-  await request(
+  // 8. Provar exportació a document Word (.doc)
+  console.log('8. Provant endpoint d\'exportació Word (.doc)...');
+  const exportRes = await request({
+    hostname: '127.0.0.1',
+    port: PORT,
+    path: '/api/admin/export-doc',
+    method: 'GET',
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  if (exportRes.status !== 200 || !exportRes.body.html || !exportRes.body.html.includes('urn:schemas-microsoft-com:office:word')) {
+    throw new Error('Exportació Word (.doc) ha fallat');
+  }
+  console.log('✓ Document Word (.doc) generat amb èxit');
+
+  // 9. Provar inicialització de preguntes amb la paraula "limpiar"
+  console.log('9. Provant inicialització de preguntes (seguretat "limpiar")...');
+  
+  // 9a. Sense token -> 401
+  const resetNoAuth = await request(
+    { hostname: '127.0.0.1', port: PORT, path: '/api/admin/reset', method: 'POST', headers: { 'Content-Type': 'application/json' } },
+    { confirmation: 'limpiar' }
+  );
+  if (resetNoAuth.status !== 401) throw new Error('Hauria de requerir autorització admin');
+
+  // 9b. Amb paraula incorrecta -> 400
+  const resetWrongWord = await request(
     {
       hostname: '127.0.0.1',
       port: PORT,
-      path: '/api/document/respostes',
+      path: '/api/admin/reset',
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
     },
-    { editor: null, respostes: { p_a1: '', p_a2: '' } }
+    { confirmation: 'eliminar' }
   );
+  if (resetWrongWord.status !== 400) throw new Error('Hauria de fallar si no s\'escriu exactament "limpiar"');
+
+  // 9c. Amb "limpiar" -> 200 OK
+  const resetOk = await request(
+    {
+      hostname: '127.0.0.1',
+      port: PORT,
+      path: '/api/admin/reset',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
+    },
+    { confirmation: 'limpiar' }
+  );
+  if (resetOk.status !== 200 || !resetOk.body.success) throw new Error('Reset amb "limpiar" ha fallat');
+  
+  // Comprovar que s'han restablert exactament les 31 preguntes i respostes buides
+  const postResetDoc = await request({ hostname: '127.0.0.1', port: PORT, path: '/api/document', method: 'GET' });
+  const countAfter = postResetDoc.body.seccions.reduce((acc, s) => acc + s.preguntes.length, 0);
+  if (countAfter !== 31) throw new Error(`Esperades 31 preguntes després de reset, trobades: ${countAfter}`);
+  if (Object.keys(postResetDoc.body.document.respostes).length !== 0) throw new Error('Les respostes haurien d\'estar buides');
+  console.log('✓ Inicialització de preguntes validada amb èxit: 31 preguntes restablertes i dades buidades.');
 
   console.log('--- TOTES LES PROVES HAN PASSAT AMB ÈXIT! ---');
 }

@@ -1,0 +1,304 @@
+{
+  "config": {
+    "titol": "Document de treball: Preguntes remodelació web ACAB",
+    "descripcio": "Aquest qüestionari té com a objectiu conèixer millor les necessitats d’ACAB, els seus públics, els serveis que ofereix i els objectius que hauria de complir el nou web.\n\nNo cal que les respostes siguin extenses. Ens interessa especialment identificar prioritats, necessitats i aspectes que considereu que caldria millorar.",
+    "adminPin": "acab2026"
+  },
+  "seccions": [
+    {
+      "id": "sec_a",
+      "lletra": "A",
+      "titol": "A. Objectius i prioritats",
+      "preguntes": [
+        {
+          "id": "p_a1",
+          "ordre": 1,
+          "titol": "Quins són els 3-5 objectius més importants que ha de complir el nou web?",
+          "pista": "(Per exemple: facilitar l'accés a l'atenció, captar consultes, donar a conèixer serveis de prevenció, generar confiança, facilitar recursos, donar visibilitat a l'activitat d'ACAB...)",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_a2",
+          "ordre": 2,
+          "titol": "Què voldríeu que fes millor el web d'aquí a un any?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_a3",
+          "ordre": 3,
+          "titol": "Quin problema actual del web us preocupa més?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_a4",
+          "ordre": 4,
+          "titol": "Què considereu que funciona bé actualment i que no voldríeu perdre?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_a5",
+          "ordre": 5,
+          "titol": "Si haguéssiu de prioritzar, què hauria de facilitar especialment el nou web?",
+          "pista": "",
+          "tipus": "checkbox_list",
+          "opcions": [
+            "L’accés als serveis d’ACAB",
+            "El contacte amb ACAB",
+            "La informació i orientació a les persones usuàries",
+            "La contractació o sol·licitud de serveis",
+            "L’accés a recursos i continguts",
+            "La visibilitat i coneixement d’ACAB"
+          ],
+          "permetAltres": true
+        }
+      ]
+    },
+    {
+      "id": "sec_b",
+      "lletra": "B",
+      "titol": "B. Atenció",
+      "preguntes": [
+        {
+          "id": "p_b1",
+          "ordre": 6,
+          "titol": "Quines són les consultes més habituals que rebeu de les persones afectades?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_b2",
+          "ordre": 7,
+          "titol": "I de les famílies?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_b3",
+          "ordre": 8,
+          "titol": "Quins són els principals serveis d'Atenció?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_b4",
+          "ordre": 9,
+          "titol": "Quin servei voldríeu potenciar especialment?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_b5",
+          "ordre": 10,
+          "titol": "Quines considereu que són les principals barreres o dubtes que té una persona afectada o una família abans de posar-se en contacte amb ACAB?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_b6",
+          "ordre": 11,
+          "titol": "Què voldríeu que fes una persona que arriba al web buscant ajuda? Quina informació necessita trobar abans de fer aquest primer pas?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_b7",
+          "ordre": 12,
+          "titol": "Quin és el recorregut actual d'una persona usuària d'atenció des que contacta amb ACAB fins que finalitza la relació?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_b8",
+          "ordre": 13,
+          "titol": "Quin seria el recorregut ideal?",
+          "pista": "",
+          "tipus": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "sec_c",
+      "lletra": "C",
+      "titol": "C. Prevenció",
+      "preguntes": [
+        {
+          "id": "p_c1",
+          "ordre": 14,
+          "titol": "Quins són els públics prioritaris de prevenció?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_c2",
+          "ordre": 15,
+          "titol": "Quins serveis o activitats voleu potenciar?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_c3",
+          "ordre": 16,
+          "titol": "Quines demandes rebeu habitualment de centres educatius?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_c4",
+          "ordre": 17,
+          "titol": "Quines demandes rebeu d'administracions, professionals i/o altres agents?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_c5",
+          "ordre": 18,
+          "titol": "Quins continguts de prevenció considereu més estratègics?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_c6",
+          "ordre": 19,
+          "titol": "Quin és el recorregut actual d'un usuari de prevenció des que entra en contacte amb ACAB fins que finalitza la relació?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_c7",
+          "ordre": 20,
+          "titol": "Quin seria el recorregut ideal?",
+          "pista": "",
+          "tipus": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "sec_d",
+      "lletra": "D",
+      "titol": "D. Observacions sobre el web actual",
+      "preguntes": [
+        {
+          "id": "p_d1",
+          "ordre": 21,
+          "titol": "Hi ha algun servei/apartat que tingui problemes d'accés o poca visibilitat i que considereu que ha d’estar més visible? Posar per ordre de prioritat",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_d2",
+          "ordre": 22,
+          "titol": "Hi ha algun contingut o apartat que actualment generi confusió?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_d3",
+          "ordre": 23,
+          "titol": "Hi ha alguna informació que actualment no és al web i que considereu que hi hauria de ser?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_d4",
+          "ordre": 24,
+          "titol": "Quines són les principals queixes, dificultats o incidències que detecteu en l'ús del web actual?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_d5",
+          "ordre": 25,
+          "titol": "Quines preguntes us fan per telèfon, correu o presencialment que penseu que el web hauria de poder respondre?",
+          "pista": "",
+          "tipus": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "sec_e",
+      "lletra": "E",
+      "titol": "E. Continguts",
+      "preguntes": [
+        {
+          "id": "p_e1",
+          "ordre": 26,
+          "titol": "Hi ha continguts a la web actual que considereu que ja no han de ser?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_e2",
+          "ordre": 27,
+          "titol": "Quins continguts generen més consultes fora del web?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_e3",
+          "ordre": 28,
+          "titol": "Hi ha continguts, recursos o serveis d'altres webs que considereu bons referents? Quins?",
+          "pista": "",
+          "tipus": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "sec_f",
+      "lletra": "F",
+      "titol": "F. Canals i captació",
+      "preguntes": [
+        {
+          "id": "p_f1",
+          "ordre": 29,
+          "titol": "Com arriben actualment les persones a ACAB?",
+          "pista": "",
+          "tipus": "textarea"
+        },
+        {
+          "id": "p_f2",
+          "ordre": 30,
+          "titol": "Podeu ordenar els canals segons la seva importància:",
+          "pista": "",
+          "tipus": "channels_matrix",
+          "columnes": [
+            "Atenció",
+            "Prevenció"
+          ],
+          "files": [
+            "Google/cercadors",
+            "Xarxes socials",
+            "Recomanacions",
+            "Centres educatius",
+            "Professionals sanitaris",
+            "Administracions",
+            "Mitjans comunicació",
+            "Altres"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sec_g",
+      "lletra": "F",
+      "titol": "F. SEO / IA",
+      "preguntes": [
+        {
+          "id": "p_f3",
+          "ordre": 31,
+          "titol": "Llistat de paraules (o expressions) clau. Identificades de més concretes a més generals.",
+          "pista": "Per si us serveix d’ajuda:\nQuines paraules o expressions utilitzen habitualment les persones quan us expliquen què necessiten? Quines considereu que haurien de relacionar-se clarament amb ACAB?",
+          "tipus": "textarea"
+        }
+      ]
+    }
+  ],
+  "document": {
+    "respostes": {},
+    "darreraModificacio": null,
+    "darrerEditor": null,
+    "versio": 1
+  }
+}
