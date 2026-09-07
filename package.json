@@ -1,0 +1,11 @@
+{
+  "name": "questionari-acab",
+  "version": "1.0.0",
+  "description": "Aplicació web senzilla per a la gestió i resposta del qüestionari de remodelació web d'ACAB",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "test": "PORT=3456 node server.js & PID=$!; sleep 1; node test-suite.js; RES=$?; kill $PID 2>/dev/null; exit $RES"
+  }
+}

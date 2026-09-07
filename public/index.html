@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document de treball: Preguntes remodelació web ACAB</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: #ebfbee;
+      color: #2b8a3e;
+      border: 1px solid #b2f2bb;
+      transition: all 0.2s ease;
+    }
+    .sync-badge.saving {
+      background: #fff9db;
+      color: #f59e0b;
+      border-color: #fde68a;
+    }
+    .sync-badge.offline {
+      background: #fee2e2;
+      color: #dc2626;
+      border-color: #fecaca;
+    }
+    .print-only {
+      display: none;
+    }
+    @media print {
+      body { background: #fff; }
+      .container { max-width: 100%; padding: 0; }
+      .header-card { border: none; box-shadow: none; padding: 0; margin-bottom: 20px; }
+      .bottom-bar, .user-bar, button { display: none !important; }
+      .form-control-text { border: 1px solid #ccc; resize: none; }
+      .print-only { display: block; }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="container">
+    <!-- Capçalera del document de treball -->
+    <header class="header-card">
+      <div class="brand-row">
+        <img src="assets/logo-sumem.jpg" alt="Sumem" class="brand-logo-sumem">
+        <img src="assets/logo-acab.png" alt="ACAB" class="brand-logo-acab">
+      </div>
+      <h1 id="app-title" class="app-title">Document de treball: Preguntes remodelació web ACAB</h1>
+      <p id="app-description" class="app-description"></p>
+
+      <div class="user-bar">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <span id="sync-indicator" class="sync-badge">
+            <span class="status-dot saved"></span>
+            <span id="sync-text">Sincronitzat en temps real</span>
+          </span>
+          <span id="last-update-text" style="font-size: 12.5px; color: var(--color-text-muted);"></span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <label for="editor-name" style="font-size: 13px; color: var(--color-text-muted); font-weight: 500;">El teu nom:</label>
+            <input type="text" id="editor-name" class="form-control-text" style="min-height: 34px; padding: 4px 10px; font-size: 13.5px; width: 150px;" placeholder="Opcional">
+          </div>
+          <button type="button" onclick="window.print()" class="btn-secondary" style="padding: 6px 12px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Imprimir
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Formulari del Document de Treball -->
+    <form id="quiz-form" onsubmit="return false;">
+      <div id="sections-container">
+        <p style="text-align: center; color: var(--color-text-muted); padding: 40px;">Carregant el document de treball...</p>
+      </div>
+    </form>
+  </main>
+
+  <!-- Barra inferior persistent d'estat de sincronització -->
+  <aside class="bottom-bar">
+    <div class="bottom-bar-inner">
+      <div class="save-status">
+        <span id="status-dot" class="status-dot saved"></span>
+        <span id="save-status-text">Document de treball actualitzat</span>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button type="button" id="btn-save" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+          Desar canvis
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Notificació toast -->
+  <div id="toast" class="alert-toast">Canvis desats correctament</div>
+
+  <script src="app.js"></script>
+</body>
+</html>

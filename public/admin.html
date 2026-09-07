@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administració | Document de treball ACAB</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-nav {
+      display: flex;
+      gap: 10px;
+      border-bottom: 2px solid var(--color-border);
+      margin-bottom: 24px;
+      padding-bottom: 4px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      margin-bottom: -6px;
+      transition: all 0.15s ease;
+    }
+    .tab-btn.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+    .doc-stat-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 18px 22px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .badge-success { background: var(--color-success-bg); color: var(--color-success); }
+    .badge-gray { background: #e2e8f0; color: #475569; }
+
+    .admin-question-item {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .admin-question-info { flex: 1; }
+    .admin-question-actions { display: flex; gap: 8px; }
+
+    .doc-item-view {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin-bottom: 16px;
+    }
+    .doc-q-title {
+      font-size: 15.5px;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: 8px;
+    }
+    .doc-q-pista {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+    .doc-answer-box {
+      font-size: 14.5px;
+      color: var(--color-text-main);
+      white-space: pre-wrap;
+      background: var(--color-bg);
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--color-text-light);
+    }
+    .doc-answer-empty {
+      color: var(--color-text-light);
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Modal de Login Admin -->
+  <div id="admin-login-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 20px;">
+        <img src="assets/logo-sumem.jpg" alt="Sumem" class="brand-logo-sumem">
+        <img src="assets/logo-acab.png" alt="ACAB" class="brand-logo-acab">
+      </div>
+      <h2 class="modal-title">Zona d'administració</h2>
+      <p class="modal-subtitle">Introdueix la contrasenya d'administrador per gestionar el document de treball:</p>
+      <form id="admin-login-form">
+        <div style="margin-bottom: 16px;">
+          <input type="password" id="admin-pin-input" class="form-control-text" style="min-height: 44px; text-align: center; font-size: 18px; letter-spacing: 2px;" placeholder="Contrasenya" required autofocus>
+        </div>
+        <p id="login-error" style="color: var(--color-primary); font-size: 13.5px; margin-bottom: 12px; display: none;">Contrasenya incorrecta</p>
+        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">Accedir al tauler</button>
+      </form>
+    </div>
+  </div>
+
+  <main class="container">
+    <!-- Capçalera Admin -->
+    <header class="header-card">
+      <div class="brand-row">
+        <img src="assets/logo-sumem.jpg" alt="Sumem" class="brand-logo-sumem">
+        <img src="assets/logo-acab.png" alt="ACAB" class="brand-logo-acab">
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 8px;">
+        <h1 class="app-title" style="margin-bottom: 0;">Panell d'administració</h1>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <a href="/" target="_blank" class="btn-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            Obrir document de treball comú
+          </a>
+          <button id="btn-logout" class="btn-link" type="button">Tancar sessió</button>
+        </div>
+      </div>
+      <p class="app-description" style="margin-bottom: 0;">Gestió de preguntes, seccions i supervisió del document de treball col·laboratiu.</p>
+    </header>
+
+    <!-- Navegació per pestanyes -->
+    <nav class="admin-nav">
+      <button class="tab-btn active" data-tab="document">Estat del document de treball</button>
+      <button class="tab-btn" data-tab="preguntes">Gestió de preguntes i seccions</button>
+      <button class="tab-btn" data-tab="enllacos">Enllaç per compartir</button>
+    </nav>
+
+    <!-- PESTANYA 1: ESTAT DEL DOCUMENT DE TREBALL -->
+    <section id="tab-document" class="tab-content">
+      <!-- Targeta d'estadístiques -->
+      <div class="doc-stat-card">
+        <div>
+          <div style="font-size: 14px; color: var(--color-text-muted); margin-bottom: 4px;">Progrés del document de treball:</div>
+          <div style="font-size: 20px; font-weight: 700; color: var(--color-text-main);">
+            <span id="stat-answered">0</span> de <span id="stat-total">31</span> preguntes respostes
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <span id="stat-progress-badge" class="badge badge-gray" style="font-size: 14px;">En curs</span>
+          <div id="stat-last-mod" style="font-size: 12.5px; color: var(--color-text-muted); margin-top: 4px;">Sense canvis recents</div>
+        </div>
+      </div>
+
+      <!-- Contingut del document viu -->
+      <div id="admin-doc-content">
+        <p style="text-align: center; color: var(--color-text-muted); padding: 40px;">Carregant dades...</p>
+      </div>
+    </section>
+
+    <!-- PESTANYA 2: GESTIÓ DE PREGUNTES I SECCIONS -->
+    <section id="tab-preguntes" class="tab-content" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h2 style="color: var(--color-primary); font-size: 18px; font-weight: 700;">Llistat de preguntes i seccions</h2>
+          <p style="font-size: 13.5px; color: var(--color-text-muted);">Pots modificar preguntes i seccions, crear-ne de noves o eliminar-les.</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button id="btn-add-section" class="btn-secondary" type="button">+ Afegir secció</button>
+          <button id="btn-add-question" class="btn-primary" type="button">+ Afegir pregunta</button>
+        </div>
+      </div>
+      <div id="admin-questions-list"></div>
+    </section>
+
+    <!-- PESTANYA 3: ENLLAÇ PER COMPARTIR -->
+    <section id="tab-enllacos" class="tab-content" style="display: none;">
+      <div class="header-card" style="margin-bottom: 20px;">
+        <h2 style="color: var(--color-primary); font-size: 18px; font-weight: 700; margin-bottom: 8px;">Enllaç únic del document de treball</h2>
+        <p style="font-size: 14px; color: var(--color-text-muted); margin-bottom: 16px;">
+          Comparteix aquest enllaç amb l'equip i el client. Tothom que l'obri veurà i podrà anar omplint o modificant el mateix document compartit en temps real:
+        </p>
+
+        <div style="display: flex; gap: 8px; max-width: 600px;">
+          <input type="text" id="input-public-url" class="form-control-text" style="min-height: 42px; font-size: 14.5px;" readonly>
+          <button class="btn-primary" id="btn-copy-public-url" type="button">Copiar enllaç</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal per editar o crear pregunta -->
+  <div id="modal-edit-question" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 580px; text-align: left;">
+      <h2 id="modal-edit-title" class="modal-title">Editar pregunta</h2>
+      <form id="form-edit-question" style="margin-top: 16px;">
+        <input type="hidden" id="edit-q-id">
+        
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 13.5px; font-weight: 600; display: block; margin-bottom: 4px;">Secció:</label>
+          <select id="edit-q-seccio" class="form-control-text" style="min-height: 42px; padding: 8px;" required></select>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 13.5px; font-weight: 600; display: block; margin-bottom: 4px;">Enunciat de la pregunta:</label>
+          <textarea id="edit-q-titol" class="form-control-text" style="min-height: 80px;" required></textarea>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 13.5px; font-weight: 600; display: block; margin-bottom: 4px;">Pista / Explicació d'ajuda (opcional):</label>
+          <textarea id="edit-q-pista" class="form-control-text" style="min-height: 60px;" placeholder="Ex: (Per exemple: ...)"></textarea>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label style="font-size: 13.5px; font-weight: 600; display: block; margin-bottom: 4px;">Tipus de resposta:</label>
+          <select id="edit-q-tipus" class="form-control-text" style="min-height: 42px; padding: 8px;">
+            <option value="textarea">Text lliure (paràgraf)</option>
+            <option value="checkbox_list">Llista d'opcions seleccionables</option>
+            <option value="channels_matrix">Taula de canals (Atenció / Prevenció)</option>
+          </select>
+        </div>
+
+        <!-- Bloc configurable d'opcions per a checkbox_list -->
+        <div id="box-options-checkbox" style="display: none; margin-bottom: 20px; background: var(--color-bg); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+          <label style="font-size: 13.5px; font-weight: 600; display: block; margin-bottom: 4px; color: var(--color-text-main);">
+            Opcions de resposta (escriu una per línia):
+          </label>
+          <textarea id="edit-q-opcions" class="form-control-text" style="min-height: 100px; font-size: 14px;" placeholder="L’accés als serveis d’ACAB&#10;El contacte amb ACAB&#10;..."></textarea>
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; margin-top: 10px; cursor: pointer; color: var(--color-text-main); user-select: none;">
+            <input type="checkbox" id="edit-q-permet-altres" style="width: 16px; height: 16px; accent-color: var(--color-primary);">
+            Permetre que s'afegeixi "Altres: [text lliure]"
+          </label>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" id="btn-cancel-edit-q" class="btn-secondary">Cancel·lar</button>
+          <button type="submit" class="btn-primary">Desar pregunta</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal per editar o crear secció -->
+  <div id="modal-edit-section" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 500px; text-align: left;">
+      <h2 id="modal-edit-section-title" class="modal-title">Nova secció</h2>
+      <form id="form-edit-section" style="margin-top: 16px;">
+        <input type="hidden" id="edit-sec-id">
+        <div style="margin-bottom: 16px;">
+          <label style="font-size: 13.5px; font-weight: 600; display: block; margin-bottom: 4px;">Títol de la secció:</label>
+          <input type="text" id="edit-sec-titol" class="form-control-text" style="min-height: 42px;" placeholder="Ex: G. Propostes de millora" required>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" id="btn-cancel-edit-sec" class="btn-secondary">Cancel·lar</button>
+          <button type="submit" class="btn-primary">Desar secció</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="alert-toast">Acció completada</div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
