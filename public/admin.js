@@ -49,6 +49,14 @@ const editSecTitol = document.getElementById('edit-sec-titol');
 const btnCancelEditSec = document.getElementById('btn-cancel-edit-sec');
 
 const btnExportDoc = document.getElementById('btn-export-doc');
+const btnToggleDocStatus = document.getElementById('btn-toggle-doc-status');
+const statLockBadge = document.getElementById('stat-lock-badge');
+
+const modalEditComment = document.getElementById('modal-edit-comment');
+const formEditComment = document.getElementById('form-edit-comment');
+const commentPregId = document.getElementById('comment-preg-id');
+const commentTextInput = document.getElementById('comment-text-input');
+const btnCancelComment = document.getElementById('btn-cancel-comment');
 
 const btnOpenResetModal = document.getElementById('btn-open-reset-modal');
 const modalResetDocument = document.getElementById('modal-reset-document');
@@ -163,6 +171,35 @@ function renderDocumentView() {
     statProgressBadge.textContent = 'En curs';
   }
 
+  const isClosed = !!doc.tancat;
+  if (statLockBadge) {
+    if (isClosed) {
+      statLockBadge.className = 'badge';
+      statLockBadge.style.backgroundColor = '#fee2e2';
+      statLockBadge.style.color = '#dc2626';
+      statLockBadge.textContent = '🔒 Tancat (només lectura)';
+    } else {
+      statLockBadge.className = 'badge badge-success';
+      statLockBadge.style.backgroundColor = '';
+      statLockBadge.style.color = '';
+      statLockBadge.textContent = '🟢 Obert (editable)';
+    }
+  }
+
+  if (btnToggleDocStatus) {
+    if (isClosed) {
+      btnToggleDocStatus.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Reobrir document`;
+      btnToggleDocStatus.style.borderColor = '#86efac';
+      btnToggleDocStatus.style.color = '#15803d';
+      btnToggleDocStatus.style.backgroundColor = '#f0fdf4';
+    } else {
+      btnToggleDocStatus.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Tancar document`;
+      btnToggleDocStatus.style.borderColor = '#fcd34d';
+      btnToggleDocStatus.style.color = '#b45309';
+      btnToggleDocStatus.style.backgroundColor = '#fffbeb';
+    }
+  }
+
   if (doc.darreraModificacio) {
     const d = new Date(doc.darreraModificacio);
     const dateStr = d.toLocaleString('ca-ES');
@@ -256,6 +293,37 @@ function renderDocumentView() {
       }
 
       item.appendChild(answerContent);
+
+      // Comentari de l'administrador
+      const comentari = (doc.comentaris && doc.comentaris[preg.id]) || '';
+      const commentContainer = document.createElement('div');
+      commentContainer.style.marginTop = '10px';
+
+      if (comentari) {
+        commentContainer.innerHTML = `
+          <div class="admin-comment-card" style="margin-top: 6px;">
+            <div class="admin-comment-header">
+              <span class="admin-comment-tag">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                Comentari de l'administració (visible per a tothom)
+              </span>
+              <div style="display: flex; gap: 10px;">
+                <button type="button" class="btn-link" style="font-size: 12.5px; color: #b45309; padding: 0; text-decoration: underline; cursor: pointer;" onclick="openCommentModal('${preg.id}')">Editar</button>
+                <button type="button" class="btn-link" style="font-size: 12.5px; color: #dc2626; padding: 0; text-decoration: underline; cursor: pointer;" onclick="deleteComment('${preg.id}')">Eliminar</button>
+              </div>
+            </div>
+            <div class="admin-comment-body">${escapeHtml(comentari)}</div>
+          </div>
+        `;
+      } else {
+        commentContainer.innerHTML = `
+          <button type="button" class="btn-secondary" style="font-size: 12.5px; padding: 5px 12px; color: #b45309; border-color: #fde68a; background: #fffbeb;" onclick="openCommentModal('${preg.id}')">
+            💬 Afegir comentari d'administrador
+          </button>
+        `;
+      }
+
+      item.appendChild(commentContainer);
       adminDocContent.appendChild(item);
     });
   });
@@ -662,6 +730,17 @@ function generateWordDocument(db) {
         `;
       }
 
+      const comentari = (doc.comentaris && doc.comentaris[preg.id]) || '';
+      let comentariHtml = '';
+      if (comentari) {
+        comentariHtml = `
+          <div style="background-color: #fffbeb; border: 1pt solid #fde68a; border-left: 3pt solid #d97706; padding: 6pt 8pt; margin-top: 6pt; font-size: 10pt; color: #78350f;">
+            <div style="font-weight: bold; font-size: 8.5pt; color: #b45309; margin-bottom: 2pt;">COMENTARI DE L'ADMINISTRACIÓ:</div>
+            <div>${escapeHtml(comentari).replace(/\n/g, '<br>')}</div>
+          </div>
+        `;
+      }
+
       sectionsHtml += `
         <div style="margin-bottom: 14pt; page-break-inside: avoid;">
           <div style="font-weight: bold; font-size: 11pt; color: #0f172a; margin-bottom: 2pt;">
@@ -669,6 +748,7 @@ function generateWordDocument(db) {
           </div>
           ${preg.pista ? `<div style="font-size: 9pt; color: #64748b; font-style: italic; margin-bottom: 3pt;">${escapeHtml(preg.pista)}</div>` : ''}
           ${respostaHtml}
+          ${comentariHtml}
         </div>
       `;
     });
@@ -703,6 +783,7 @@ function generateWordDocument(db) {
     </p>
     <p style="font-size: 9pt; color: #64748b; margin-top: 3pt;">
       Darrera modificació: ${darreraMod} ${editor !== '—' ? `· Últim editor: ${escapeHtml(editor)}` : ''}
+      ${doc.tancat ? '· <strong style="color: #dc2626;">[DOCUMENT TANCAT - NOMÉS LECTURA]</strong>' : ''}
     </p>
   </div>
 
@@ -737,7 +818,114 @@ if (btnExportDoc) {
   btnExportDoc.addEventListener('click', downloadWordDocument);
 }
 
-// 5. Modal inicialitzar preguntes (amb confirmació "limpiar")
+// 5. Tancar o reobrir el document de treball
+if (btnToggleDocStatus) {
+  btnToggleDocStatus.addEventListener('click', async () => {
+    const isClosed = !!(fullDb && fullDb.document && fullDb.document.tancat);
+    const msg = isClosed
+      ? 'Vols reobrir el document de treball perquè tothom pugui tornar a modificar-lo?'
+      : 'Segur que vols tancar el document de treball? Un cop tancat, ningú podrà modificar ni desar noves respostes.';
+
+    if (!confirm(msg)) return;
+
+    btnToggleDocStatus.disabled = true;
+
+    try {
+      const res = await fetch('/api/admin/document/estat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        },
+        body: JSON.stringify({ tancat: !isClosed })
+      });
+
+      if (res.ok) {
+        showToast(!isClosed ? 'Document tancat (només lectura)' : 'Document reobert (editable)');
+        await loadAdminData();
+      } else {
+        showToast('Error en actualitzar l\'estat del document');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Error de connexió');
+    } finally {
+      btnToggleDocStatus.disabled = false;
+    }
+  });
+}
+
+// 6. Gestió de comentaris d'administració per pregunta
+window.openCommentModal = function(pregId) {
+  commentPregId.value = pregId;
+  const currentComment = (fullDb.document && fullDb.document.comentaris && fullDb.document.comentaris[pregId]) || '';
+  commentTextInput.value = currentComment;
+  modalEditComment.style.display = 'flex';
+  setTimeout(() => commentTextInput.focus(), 50);
+};
+
+window.deleteComment = async function(pregId) {
+  if (!confirm('Segur que vols eliminar aquest comentari?')) return;
+
+  try {
+    const res = await fetch('/api/admin/comentaris', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${adminToken}`
+      },
+      body: JSON.stringify({ preguntaId: pregId, comentari: '' })
+    });
+
+    if (res.ok) {
+      showToast('Comentari eliminat');
+      await loadAdminData();
+    } else {
+      showToast('Error eliminant el comentari');
+    }
+  } catch (err) {
+    console.error(err);
+    showToast('Error de connexió');
+  }
+};
+
+if (btnCancelComment) {
+  btnCancelComment.addEventListener('click', () => {
+    modalEditComment.style.display = 'none';
+  });
+}
+
+if (formEditComment) {
+  formEditComment.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const pregId = commentPregId.value;
+    const text = commentTextInput.value.trim();
+
+    try {
+      const res = await fetch('/api/admin/comentaris', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        },
+        body: JSON.stringify({ preguntaId: pregId, comentari: text })
+      });
+
+      if (res.ok) {
+        modalEditComment.style.display = 'none';
+        showToast('Comentari desat correctament');
+        await loadAdminData();
+      } else {
+        showToast('Error desant el comentari');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Error de connexió');
+    }
+  });
+}
+
+// 7. Modal inicialitzar preguntes (amb confirmació "limpiar")
 if (btnOpenResetModal) {
   btnOpenResetModal.addEventListener('click', () => {
     inputConfirmLimpiar.value = '';

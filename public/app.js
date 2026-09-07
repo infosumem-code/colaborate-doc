@@ -18,6 +18,72 @@ const btnSave = document.getElementById('btn-save');
 const saveStatusText = document.getElementById('save-status-text');
 const statusDot = document.getElementById('status-dot');
 const toast = document.getElementById('toast');
+const closedDocumentBanner = document.getElementById('closed-document-banner');
+
+function updateDocumentStatusDisplay(isClosed) {
+  if (closedDocumentBanner) {
+    closedDocumentBanner.style.display = isClosed ? 'flex' : 'none';
+  }
+  if (isClosed) {
+    setSyncStatus('offline', '🔒 Document tancat (només lectura)');
+    if (btnSave) {
+      btnSave.disabled = true;
+      btnSave.style.opacity = '0.6';
+      btnSave.title = 'Document tancat per l\'administració';
+    }
+    if (saveStatusText) {
+      saveStatusText.textContent = 'Document tancat per l\'administració';
+    }
+  } else {
+    if (btnSave) {
+      btnSave.disabled = false;
+      btnSave.style.opacity = '1';
+      btnSave.title = '';
+    }
+  }
+  setInputsDisabled(isClosed);
+}
+
+function setInputsDisabled(disabled) {
+  const form = document.getElementById('quiz-form');
+  if (!form) return;
+  const elements = form.querySelectorAll('input, textarea');
+  elements.forEach(el => {
+    el.disabled = disabled;
+    if (el.tagName === 'TEXTAREA' || el.type === 'text') {
+      el.readOnly = disabled;
+    }
+  });
+}
+
+function createAdminCommentElement(comentari) {
+  const commentDiv = document.createElement('div');
+  commentDiv.className = 'admin-comment-card';
+  commentDiv.innerHTML = `
+    <div class="admin-comment-header">
+      <span class="admin-comment-tag">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        Comentari de l'administració
+      </span>
+    </div>
+    <div class="admin-comment-body">${escapeHtml(comentari)}</div>
+  `;
+  return commentDiv;
+}
+
+function updateAdminComment(card, comentari) {
+  let commentEl = card.querySelector('.admin-comment-card');
+  if (!comentari) {
+    if (commentEl) commentEl.remove();
+  } else {
+    if (!commentEl) {
+      card.appendChild(createAdminCommentElement(comentari));
+    } else {
+      const body = commentEl.querySelector('.admin-comment-body');
+      if (body) body.textContent = comentari;
+    }
+  }
+}
 
 // Recuperar nom d'editor guardat a la sessió
 if (editorNameInput) {
@@ -47,6 +113,7 @@ async function init() {
 
     updateMetaDisplay(documentData.document.darreraModificacio, documentData.document.darrerEditor);
     renderDocument(documentData.seccions);
+    updateDocumentStatusDisplay(documentData.document && documentData.document.tancat);
 
     setSyncStatus('saved', 'Sincronitzat en temps real');
 
@@ -97,6 +164,7 @@ async function fetchAndApplyRemoteChanges(newVersion) {
     localAnswers = { ...remoteAnswers };
     updateFieldsWithoutActiveElement(remoteAnswers);
     updateMetaDisplay(freshData.document.darreraModificacio, freshData.document.darrerEditor);
+    updateDocumentStatusDisplay(freshData.document && freshData.document.tancat);
 
   } catch (err) {
     console.warn('Error sincronitzant canvis remots:', err);
@@ -162,6 +230,10 @@ function updateFieldsWithoutActiveElement(remoteAnswers) {
           }
         });
       }
+
+      // 4. Comentari de l'administrador
+      const comentaris = (documentData && documentData.document && documentData.document.comentaris) || {};
+      updateAdminComment(card, comentaris[preg.id]);
     });
   });
 }
@@ -401,11 +473,18 @@ function renderQuestionCard(preg) {
     card.appendChild(tableWrapper);
   }
 
+  // Comentari de l'administrador
+  const comentaris = (documentData && documentData.document && documentData.document.comentaris) || {};
+  if (comentaris[preg.id]) {
+    card.appendChild(createAdminCommentElement(comentaris[preg.id]));
+  }
+
   return card;
 }
 
 // Marcar que hi ha canvis i disparar auto-desat ràpid (debounced 1 segon)
 function markChanged() {
+  if (documentData && documentData.document && documentData.document.tancat) return;
   hasPendingChanges = true;
   setSyncStatus('saving', 'Desant canvis...');
 
@@ -418,6 +497,10 @@ function markChanged() {
 // Enviar canvis al servidor immediatament
 async function saveChangesNow() {
   if (autoSaveTimer) clearTimeout(autoSaveTimer);
+  if (documentData && documentData.document && documentData.document.tancat) {
+    hasPendingChanges = false;
+    return;
+  }
   const editor = editorNameInput ? editorNameInput.value.trim() : '';
 
   try {

@@ -133,6 +133,9 @@
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 8px;">
         <h1 class="app-title" style="margin-bottom: 0;">Panell d'administració</h1>
         <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <button id="btn-toggle-doc-status" class="btn-secondary" type="button" style="display: inline-flex; align-items: center; gap: 6px;">
+            <!-- Dinàmic: Tancar o Reobrir document -->
+          </button>
           <button id="btn-export-doc" class="btn-primary" type="button" style="display: inline-flex; align-items: center; gap: 6px;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             Descarregar Word (.doc)
@@ -165,7 +168,10 @@
           </div>
         </div>
         <div style="text-align: right;">
-          <span id="stat-progress-badge" class="badge badge-gray" style="font-size: 14px;">En curs</span>
+          <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center; flex-wrap: wrap;">
+            <span id="stat-lock-badge" class="badge badge-success" style="font-size: 13.5px;">Obert (editable)</span>
+            <span id="stat-progress-badge" class="badge badge-gray" style="font-size: 13.5px;">En curs</span>
+          </div>
           <div id="stat-last-mod" style="font-size: 12.5px; color: var(--color-text-muted); margin-top: 4px;">Sense canvis recents</div>
         </div>
       </div>
@@ -302,6 +308,26 @@
         <div style="display: flex; justify-content: flex-end; gap: 10px;">
           <button type="button" id="btn-cancel-reset" class="btn-secondary">Cancel·lar</button>
           <button type="submit" id="btn-confirm-reset" class="btn-danger" disabled>Inicialitzar preguntes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal per editar o afegir comentari d'administrador -->
+  <div id="modal-edit-comment" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 540px; text-align: left;">
+      <h2 id="modal-comment-title" class="modal-title">Comentari de l'administració</h2>
+      <p style="font-size: 13.5px; color: var(--color-text-muted); margin-bottom: 14px;">
+        Aquest comentari serà visible per a tothom que accedeixi al document compartit, destacat en color daurat:
+      </p>
+      <form id="form-edit-comment">
+        <input type="hidden" id="comment-preg-id">
+        <div style="margin-bottom: 16px;">
+          <textarea id="comment-text-input" class="form-control-text" style="min-height: 110px; font-size: 14.5px; line-height: 1.5;" placeholder="Escriu una nota, suggeriment o indicació..." required></textarea>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" id="btn-cancel-comment" class="btn-secondary">Cancel·lar</button>
+          <button type="submit" class="btn-primary">Desar comentari</button>
         </div>
       </form>
     </div>

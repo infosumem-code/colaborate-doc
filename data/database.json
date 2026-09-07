@@ -297,6 +297,8 @@
   ],
   "document": {
     "respostes": {},
+    "comentaris": {},
+    "tancat": false,
     "darreraModificacio": null,
     "darrerEditor": null,
     "versio": 1

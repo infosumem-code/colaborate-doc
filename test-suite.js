@@ -197,7 +197,82 @@ async function runTests() {
   const countAfter = postResetDoc.body.seccions.reduce((acc, s) => acc + s.preguntes.length, 0);
   if (countAfter !== 31) throw new Error(`Esperades 31 preguntes després de reset, trobades: ${countAfter}`);
   if (Object.keys(postResetDoc.body.document.respostes).length !== 0) throw new Error('Les respostes haurien d\'estar buides');
-  console.log('✓ Inicialització de preguntes validada amb èxit: 31 preguntes restablertes i dades buidades.');
+  // 10. Provar tancament i reobertura del document
+  console.log('10. Provant tancament i reobertura del document...');
+  // Tancar document
+  const lockRes = await request(
+    {
+      hostname: '127.0.0.1',
+      port: PORT,
+      path: '/api/admin/document/estat',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
+    },
+    { tancat: true }
+  );
+  if (lockRes.status !== 200 || !lockRes.body.tancat) throw new Error('Tancar document ha fallat');
+
+  // Intentar editar amb document tancat -> ha de retornar 403 Forbidden
+  const tryEditClosed = await request(
+    {
+      hostname: '127.0.0.1',
+      port: PORT,
+      path: '/api/document/respostes',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    },
+    { editor: 'Intrús', respostes: { p_a1: 'Intent de canvi bloquejat' } }
+  );
+  if (tryEditClosed.status !== 403) throw new Error(`Esperat 403 Forbidden en desar quan el document està tancat, obtingut: ${tryEditClosed.status}`);
+  console.log('✓ Bloqueig d\'edició verificat (403 Forbidden quan el document està tancat).');
+
+  // Reobrir document
+  const unlockRes = await request(
+    {
+      hostname: '127.0.0.1',
+      port: PORT,
+      path: '/api/admin/document/estat',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
+    },
+    { tancat: false }
+  );
+  if (unlockRes.status !== 200 || unlockRes.body.tancat !== false) throw new Error('Reobrir document ha fallat');
+  console.log('✓ Reobertura del document verificada correctament.');
+
+  // 11. Provar comentaris de l'administrador
+  console.log('11. Provant comentaris d\'administrador per pregunta...');
+  const addCommentRes = await request(
+    {
+      hostname: '127.0.0.1',
+      port: PORT,
+      path: '/api/admin/comentaris',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
+    },
+    { preguntaId: 'p_a1', comentari: 'Nota important: prioritzar sempre l\'atenció directa.' }
+  );
+  if (addCommentRes.status !== 200 || !addCommentRes.body.comentaris.p_a1) throw new Error('Afegir comentari d\'admin ha fallat');
+
+  // Comprovar que el document públic té el comentari
+  const docWithComment = await request({ hostname: '127.0.0.1', port: PORT, path: '/api/document', method: 'GET' });
+  if (docWithComment.body.document.comentaris?.p_a1 !== 'Nota important: prioritzar sempre l\'atenció directa.') {
+    throw new Error('El document públic no conté el comentari d\'administrador');
+  }
+  console.log('✓ Comentari d\'administració registrat i visible en el document.');
+
+  // Netejar el comentari de prova
+  await request(
+    {
+      hostname: '127.0.0.1',
+      port: PORT,
+      path: '/api/admin/comentaris',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
+    },
+    { preguntaId: 'p_a1', comentari: '' }
+  );
+  console.log('✓ Comentari de prova netejat.');
 
   console.log('--- TOTES LES PROVES HAN PASSAT AMB ÈXIT! ---');
 }
