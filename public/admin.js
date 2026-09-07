@@ -308,7 +308,7 @@ function renderDocumentView() {
                 Comentari de l'administració (visible per a tothom)
               </span>
               <div style="display: flex; gap: 10px;">
-                <button type="button" class="btn-link" style="font-size: 12.5px; color: #b45309; padding: 0; text-decoration: underline; cursor: pointer;" onclick="openCommentModal('${preg.id}')">Editar</button>
+                <button type="button" class="btn-link" style="font-size: 12.5px; color: #c9211e; padding: 0; text-decoration: underline; cursor: pointer;" onclick="openCommentModal('${preg.id}')">Editar</button>
                 <button type="button" class="btn-link" style="font-size: 12.5px; color: #dc2626; padding: 0; text-decoration: underline; cursor: pointer;" onclick="deleteComment('${preg.id}')">Eliminar</button>
               </div>
             </div>
@@ -317,7 +317,7 @@ function renderDocumentView() {
         `;
       } else {
         commentContainer.innerHTML = `
-          <button type="button" class="btn-secondary" style="font-size: 12.5px; padding: 5px 12px; color: #b45309; border-color: #fde68a; background: #fffbeb;" onclick="openCommentModal('${preg.id}')">
+          <button type="button" class="btn-secondary" style="font-size: 12.5px; padding: 5px 12px; color: #c9211e; border-color: #fecaca; background: #fff5f5;" onclick="openCommentModal('${preg.id}')">
             💬 Afegir comentari d'administrador
           </button>
         `;
@@ -734,8 +734,8 @@ function generateWordDocument(db) {
       let comentariHtml = '';
       if (comentari) {
         comentariHtml = `
-          <div style="background-color: #fffbeb; border: 1pt solid #fde68a; border-left: 3pt solid #d97706; padding: 6pt 8pt; margin-top: 6pt; font-size: 10pt; color: #78350f;">
-            <div style="font-weight: bold; font-size: 8.5pt; color: #b45309; margin-bottom: 2pt;">COMENTARI DE L'ADMINISTRACIÓ:</div>
+          <div style="background-color: #fff5f5; border: 1pt solid #fecaca; border-left: 3pt solid #c9211e; padding: 6pt 8pt; margin-top: 6pt; font-size: 10pt; color: #991b1b;">
+            <div style="font-weight: bold; font-size: 8.5pt; color: #c9211e; margin-bottom: 2pt;">COMENTARI DE L'ADMINISTRACIÓ:</div>
             <div>${escapeHtml(comentari).replace(/\n/g, '<br>')}</div>
           </div>
         `;
